@@ -1,0 +1,386 @@
+if  ( ! window [ "Приложение" ] )  выбросить  новую  ошибку ( "Критическая ошибка в приложении" ) ;
+( функция  m ( приложение )  {
+
+
+    // ================================================ ================================================== =========
+
+
+    function  lib ( )  {
+        var  _windowContainer  =  null ,
+        _guid  =  null ,
+        _poll  =  это ,
+        _name  =  '' ,
+        _store  =  null ;
+
+        var  header ,  panel ;
+
+        var  save  =  function ( ) {  // Функция сохранения изменений в анкете
+            если  ( ! panel . container [ 'form' ] . pharmId )  вернуть  false ;
+
+            var  modifyData  =  '' ;
+
+            $ . каждый ( _store . getModifiedRecords ( ) ,  function ( index ,  rec ) {
+                $ . каждый ( рек . изменено ,  функция ( имя ) {
+                    modifyData  + =  '& values ​​[' + index + '] [' + name + '] ='  +  rec . данные [ имя ] ;
+                } ) ;
+                modifyData  + =  '& id [' + index + '] ='  +  rec . id ;
+            } ) ;
+            если  ( modifyData  ==  '' )  возврат ;
+                $ . getJSON ( './modules/units/units.php?action=SET_FORMDATA&pharmId=' + панель . Контейнер [ 'форма' ] . pharmId + '& ProjectID =' + _param . ProjectID + '& stageId =' + _param . stageId  +  modifyData  + '& rnd =' + Math . random ( ) ,  function ( data ) {
+                if  ( ! data  ||  ! data . result ) {
+                    alert ( 'ошибка сохранения, попробуйте еще раз' ) ;
+                    // _ store.rejectChanges ();
+                } else  if  ( data . result  ==  true ) {
+                    _store . commitChanges ( ) ;
+                    панель . контейнер [ 'форма' ] . loadData ( панель . контейнер [ 'форма' ] . PharmId ) ;
+                }
+                $ . unblockUI ( ) ;
+            } . привязать ( это ) ) ;
+        }
+
+        var  Header  =  function  ( container )  {
+            var  id  =  'li [rel = "'  +  _guid  +  '"]' +  ".context" ;
+            var  template  =  '<div class = "header" style = "clear: both; font-size: small;"> <div class = "context" style = "clear: both; overflow: hidden"> </div> < div class = "header_button collapse"> </div> <div class = "buttons"> & nbsp; </div> </div> ' ;
+            Заголовок . суперкласс . применить ( это ,  [ идентификатор ,  шаблон ,  контейнер ] ) ;
+
+            это . appendTo  =  function  ( parent )  {
+                $ ( родитель ) . добавить ( этот . шаблон ) ;
+                вернуть  это ;
+            }
+
+            var  _expanded  =  true ;
+
+            это . expand  =  function ( callback ) {
+                _expanded  =  true ;
+                _windowContainer . найти ( '.header_button' ) . removeClass ( 'развернуть' ) . addClass ( 'коллапс' ) ;
+                это . элемент ( ) . animate ( {
+                    высота : это . контейнер [ 'название' ] . элемент ( ) . externalHeight ( )  +  this . контейнер [ 'описание' ] . элемент ( ) . externalHeight ( )
+                } ,  «быстро» ,  обратный вызов ) ;
+            }
+
+            это . height  =  function  ( height )  {
+                вернуть  _windowContainer . найти ( '.header' ) . externalHeight ( )
+            }
+
+            это . расширенный  =  функция ( ) {
+                return  _expanded ;
+            }
+
+            это . addButton  =  function ( подпись ,  делегат ) {
+                _windowContainer . найти ( '. кнопки' ) . append ( '<input type = "button" id = "' + caption + '" value = "' + caption + '" />' ) ;
+                _windowContainer . найти ( '.buttons #' + заголовок ) . клик ( делегат ) ;
+            }
+
+            это . collapse  =  function ( callback ) {
+                _expanded  =  false ;
+                _windowContainer . найти ( '.header_button' ) . removeClass ( 'коллапс' ) . addClass ( 'расширить' ) ;
+                это . элемент ( ) . animate ( {
+                    высота : это . контейнер [ 'название' ] . элемент ( ) . externalHeight ( )
+                } ,  «быстро» ,  обратный вызов ) ;
+            }
+
+            это . toggle  =  function ( callback ) {
+                if  ( _expanded ) {
+                    это . свернуть ( обратный вызов ) ;
+                } else {
+                    это . развернуть ( обратный вызов ) ;
+                }
+            }
+
+            это . click  =  function ( delegate ) {
+                если  ( ! делегат ) {
+                    _windowContainer . найти ( '.header_button' ) . щелчок ( ) ;
+                } else {
+                    _windowContainer . найти ( '.header_button' ) . unbind ( ) . клик ( делегат ) ;
+                }
+            }
+        }
+        Заголовок . наследуется ( Прил . VisualElement ) ; // Наследуем элемент от базового файла part_of_core.js
+
+        var  Title  =  function ( ) {
+            var  id  =  'li [rel = "'  +  _guid  +  '"]' +  ".title" ;
+            var  template  =  '<div class = "title" style = "clear: both"> Приближая весну </div>' ;
+            Заголовок . суперкласс . применить ( это ,  [ идентификатор ,  шаблон ] ) ;
+        }
+        Заголовок . наследуется ( Прил . VisualElement ) ;
+        
+        var  Description  =  function ( ) {
+            var  id  =  'li [rel = "'  +  _guid  +  '"]' +  ".description" ;
+            var  template  =  '<div class = "description" style = "clear: both"> </div>' ;
+            Описание . суперкласс . применить ( это ,  [ идентификатор ,  шаблон ] ) ;
+        }
+        Описание . наследуется ( Прил . VisualElement ) ;
+                
+        var  Panel  =  function ( container ) {
+            var  id  =  'li [rel = "'  +  _guid  +  '"]' +  ".panel" ;
+            var  template  =  '<div class = "panel" style = "width: 100%;"> </div>' ;
+            Панель . суперкласс . применить ( это ,  [ идентификатор ,  шаблон ,  контейнер ] ) ;
+        }
+        Панель . наследуется ( Прил . VisualElement ) ;
+
+        var  Grid  =  function  ( )  { 
+            var  id  =  'li [rel = "'  +  _guid  +  '"]' +  ".grid" ;
+            var  template  =  '<div class = "grid" style = "background-color: # 98fb98; float: left; width: 250px;"> </div>' ;
+            Сетка . суперкласс . применить ( это ,  [ идентификатор ,  шаблон ] ) ;
+
+            var  store  =  new  Ext . данные . JsonStore ( { // аналог "DataTable" из состава ExtJS
+                корень : 'единицы' ,
+                totalProperty : 'count' ,
+                idProperty : 'id' ,
+                remoteSort : ложь ,
+
+                поля : [
+                    'id' ,  'name' ,  'address' ,  'town' ,  { name : 'checked' ,  type : 'bool' }
+                ] ,
+
+                url : 'modules / units / units.php? action = GET_ACTIVE_PHARMACIES & projectId =' + _param . projectId + '& stageId =' + _param . stageId + '& rnd =' + Math . случайный ( )
+            } ) ;
+            магазин . setDefaultSort ( 'идентификатор' ,  'по убыванию' ) ;
+
+            function  renderTopic ( значение ,  p ,  запись )  {
+                return  String . формат ( '{1}, {2} {3}' ,  запись . данные . город ,  значение ,  запись . данные . адрес ) ;
+            }
+
+            var  grid  =  new  Ext . сетка . GridPanel ( { // многофункциональный грид из состава ExtJS
+                магазин : магазин ,
+                trackMouseOver : ложь ,
+                disableSelection : ложь ,
+                ширина : 250 ,
+                loadMask : новый  Ext . LoadMask ( Ext . GetBody ( ) ,  { onLoad : function ( ) {  $ . UnblockUI ( ) ;  }  ,  onBeforeLoad : function ( ) {  $ . BlockUI ( ) ;  }  } ) ,
+
+                столбцы : [
+                {
+                    заголовок : "Аптека" ,
+                    dataIndex : 'имя' ,
+                    ширина : 200 ,
+                    рендерер : renderTopic ,
+                    сортируемый : правда
+                } ] ,
+
+                viewConfig : {
+                    forceFit : правда ,
+                    enableRowBody : правда ,
+                    showPreview : правда
+                }
+            } ) ;
+
+            это . rowClick  =  function ( event ) {
+                сетка . on ( 'rowclick' ,  function ( grid ,  rowIndex ,  e )  {
+                    var  r  =  сетка . getStore ( ) . getAt ( rowIndex ) ;
+                    событие ( r ,  rowIndex ) ;
+	            } ) ;
+            }            
+
+            это . height  =  function  ( height )  {
+                сетка . setHeight ( высота ) ;
+            }
+
+            это . appendTo  =  function  ( parent )  {
+                $ ( родитель ) . добавить ( этот . шаблон ) ;
+
+                магазин . load ( {
+                    params : {  rnd : Math . random ( )  } ,
+                    callback : function  ( )  {
+                        $ ( _poll ) . триггер ( {  тип : "опрос" ,  событие : "завершено"  } ) ;
+                    }  . привязать ( это )
+                } ) ;
+
+                сетка . render ( Ext . select ( this . id ,  true ) ) ;
+            }
+        }
+        Сетка . наследуется ( Прил . VisualElement ) ;
+
+        var  Form  =  function ( ) {
+            var  id  =  'li [rel = "'  +  _guid  +  '"]' +  ".form" ;
+            var  template  =  '<div class = "form" style = "margin: 0 auto;"> </div>' ;
+            Форма . суперкласс . применить ( это ,  [ идентификатор ,  шаблон ] ) ;
+            
+            var  grid ,  height ;
+
+            это . PharmId  =  null ;
+
+            var  config  =  {
+                forceFit : правда ,
+                enableRowBody : ложь
+            } ;
+
+            это . appendTo  =  function  ( parent )  {
+                $ ( родитель ) . добавить ( этот . шаблон ) ;
+                loadHeader . вызов ( это ) ;
+            }
+
+            это . height  =  function  ( newHeight )  {
+                height  =  newHeight ;
+                if  ( grid ) {
+                    сетка . setHeight ( высота ) ;
+                }
+            }
+
+            var  loadHeader  =  function ( ) {  // Шапка анкеты приходит из базы, но только один раз
+                $ . getJSON ( './modules/units/units.php?action=GET_FORMHEADER&projectId='  +  _param . ProjectID  +  '& stageId ='  +  _param . stageId  +  '& RND =' + Math . случайная ( ) ,  функция ( данные ) {
+                    var  mask  =  new  Ext . LoadMask ( Ext . GetBody ( ) ,  { onLoad : function ( ) {  $ . UnblockUI ( ) ;  }  ,  onBeforeLoad : function ( ) {  $ . BlockUI ( ) ;  }  } ) ;                    
+
+                    _store  =  новый  Ext . данные . GroupingStore ( {
+                        читатель : новый  доп . данные . JsonReader ( { поля : Ext . Данные . Запись . Создавать ( данные . Поля ) } )
+                    } ) ;
+
+                    if  ( $ . isArray ( данные . группы ) ) {
+                        var  group  =  new  Ext . ux . сетка . ColumnHeaderGroup ( {
+                            строки : данные . группы
+                        } ) ;
+                    }
+
+                    var  proxy  =  новый  Ext . данные . HttpProxy (
+			        {
+			            URL : './modules/units/units.php?action=GET_LIST&rnd' + Math . случайный ( ) ,
+			            метод : 'POST'
+			        } ) ;                  
+
+                    for  ( var  i  =  0 ;  i  <  data . columns . length ;  i ++ ) {
+                        if  ( data . columns [ i ] . editor  &&  data . columns [ i ] . editor . xtype  ==  'combo' ) {
+                            данные . столбцы [ i ] . ширина  =  130 ;
+                            var  store  =  new  Ext . данные . JsonStore (
+                            {
+                                поля : [ 'rowId' , 'name' ] ,
+                                прокси : прокси ,
+                                baseParams : {  listId : data . столбцы [ i ] . редактор . listId  } ,
+                                idProperty : 'rowId' ,
+                                корень : 'записи' ,
+                                autoLoad : true
+                            } ) ;
+                            данные . столбцы [ i ] . editor  =   { 
+                                xtype : 'combo' ,
+                                typeAhead : правда ,
+                                lazyRender : правда ,
+                                triggerAction : 'все' ,
+                                магазин : магазин ,
+                                режим : 'местный' , 
+                                displayField : 'имя' ,
+                                valueField : 'rowId' ,
+                                редактируемый : ложь ,
+                                selectOnFocus : true
+                            }
+                        }
+                    }
+
+                    сетка  =  новый  Ext . сетка . EditorGridPanel ( {  // Грид анкеты
+                        магазин : _store ,
+                        столбцы : данные . колонны ,
+                        ширина : 'авто' ,
+                        высота : высота ,
+                        loadMask : маска ,
+                        clicksToEdit : 0 ,
+                        viewConfig : конфигурация ,
+                        плагины : ( $ . isArray ( data . groups ) ? group : undefined )
+                    } ) ;
+
+                    сетка . render ( Ext . select ( this . id ,  true ) ) ;
+                } . привязать ( это ) ) ;
+            }
+
+            это . loadData  =  function ( pharmId ) {  // Загрузка данных анкеты в создую таблицу (Form)
+                это . PharmId  =  PharmId ;
+                _store . rejectChanges ( ) ;
+                $ . getJSON ( './modules/units/units.php?action=GET_FORMDATA&pharmId='  +  pharmId  +  '& ProjectID ='  +  _param . ProjectID  +  '& stageId ='  +  _param . stageId  +  '& RND =' + Math . случайная ( ) ,  function ( data ) {
+                    _store . loadData ( данные . строки ) ;
+                    $ . unblockUI ( ) ;
+                } ) ;
+            }
+        }
+        Форма . наследуется ( Прил . VisualElement ) ;
+
+        // ================================================ ================================================== =========
+
+
+        function  main ( viewPort )  {  // создается окно модуля
+            _windowContainer  =  viewPort ;
+
+            заголовок  =  новый  заголовок ( ) ;  // шапка модуля (документа)
+            панель  =  новая  панель ( ) ;
+
+            заголовок . appendTo ( _windowContainer . find ( '.body' ) ) ;  // добавляем ее на рабочую область
+            заголовок . добавить ( {
+                title : новый  заголовок ( ) ,
+                описание : новое  Описание ( )
+            } ) ;  // Добавляем на шапку рабочие элементы
+
+            заголовок . контейнер [ 'описание' ] . элемент ( ) . load ( './modules/units/forms.html?' + Math . random ( ) ,  function ( ) {
+                $ . unblockUI ( ) ;
+                панель . контейнер [ 'сетка' ] . height ( $ ( '#window' ) . outerHeight ( )  -  заголовок . height ( ) ) ;
+                панель . контейнер [ 'форма' ] . height ( $ ( '#window' ) . outerHeight ( )  -  заголовок . height ( ) ) ;
+            } . привязать ( это ) ) ;  // загружаем "статический" текст-описание
+
+            заголовок . addButton ( 'сохранить' ,  function ( ) {
+                сохранить ( ) ;
+            } ) ;  // обработчик на кнопку сохранения
+
+            панель . appendTo ( _windowContainer . find ( '.body' ) ) ;  // Панель эта главная рабочая область окна
+            панель . добавить ( {
+                сетка : новая  сетка ( ) ,
+                форма : новая  форма ( )
+            } ) ;  // На нее добавляем список аптек и таблицу - анкету
+
+            панель . контейнер [ 'сетка' ] . rowClick ( функция ( запись ,  индекс ) {
+                панель . контейнер [ 'форма' ] . loadData ( запись . id ) ;
+            } ) ;  // При выборе аптеки подгружаем анкету
+
+            заголовок . click ( function ( ) {
+                панель . скрыть ( ) ;
+                заголовок . toggle ( function ( ) {
+                    панель . шоу ( ) ;                    
+                    панель . контейнер [ 'сетка' ] . height ( $ ( '#window' ) . outerHeight ( )  -  заголовок . height ( ) ) ;
+                    панель . контейнер [ 'форма' ] . height ( $ ( '#window' ) . outerHeight ( )  -  заголовок . height ( ) ) ;
+                } ) ;
+            } ) ;  // При нажатии на шапку - сворачиваем ее
+        }
+
+        var  sync  =  function  ( message )  {
+            switch  ( message . event )  { // сообщения приходят только от ядра,
+                                    // если другой модуль хочет отправить сообщение этому модулю
+                                    // то все равно его "прокидывает" ядро ​​по таргету
+                case  "привязка" : // сообщение приходит один раз при успешной привязке к ядру
+                    $ ( окно . документ ) . отвязать ( 'ajaxStart' ) ;
+                    _guid  =  сообщение . гид ;
+                    _name  =  сообщение . имя ;
+                    _param  =  сообщение . данные ;
+                    if  ( _param . edit  ==  undefined )  {
+                        _param . edit  =  true
+                    }
+                    основной ( сообщение . viewPort ) ;
+                    перерыв ;
+                case  "unbinding" : // сообщение приходит один раз при выгрузке модуля
+                    $ ( окно . документ ) . ajaxStart ( $ . blockUI ) ;
+                    перерыв ;
+                case  "show" : // сообщение приходит всякий раз когда модуль становится "активным",
+                             //т.е. окно модуля фокус получает
+                    $ ( окно . документ ) . отвязать ( 'ajaxStart' ) ;
+                    перерыв ;
+                case  "hide" : // сообщение приходит при скрытии окна
+                    $ ( окно . документ ) . ajaxStart ( $ . blockUI ) ;
+                    перерыв ;
+                case  "message" : // любое другое сообщение, например служебное или от другого модуля
+                    предупреждение ( сообщение . тело . тест ) ;
+                    перерыв ;
+            }
+        } ;
+
+        это . entry  =  function  ( сообщение )  {
+            синхронизация ( сообщение ) ;  // Точка входа в модуль
+        } ;
+
+        это . getGuid  =  function  ( )  {  // каждый экземпляр модуля получает уникальный идентификатор,
+                                     // на один модуль может быть много экземпляров - в аналогии с ООП
+                                     // модуль это класс, экземпляр модуля это объект
+            return  _guid ;
+        } ;
+
+        это . getName  =  function  ( )  {
+            return  _name ;
+        } ;
+    }
+
+
+    // ================================================ ================================================== =========
+
+    Приложение . Ядро . Реестр ( Lib ,  "units_forms" ) ;  // Регистрация модуля в ядре
+} ) ( Приложение ) ; 
